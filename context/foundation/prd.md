@@ -55,7 +55,19 @@ Moment: Opening a new note and wanting to apply a template — currently either 
 - Edit mode shows raw markdown; preview mode shows rendered HTML
 - Switching modes does not modify the file's content
 
-# TODO: User story for the template insertion flow (US-02 — covering FR-010 through FR-014) — see Open Questions
+### US-02: User applies a form-driven template
+
+- **Given** a user has a templates directory containing at least one template file whose frontmatter defines one or more form fields, and a note is open in the editor
+- **When** they trigger “use template”, select a template from the templates directory, fill in the form dialog that renders the declared field types, and confirm
+- **Then** the template body with `{{field_name}}` placeholders replaced by the entered values is inserted at the cursor position in the current note (or created as a new note if triggered from the “new note from template” action)
+
+#### Acceptance Criteria
+- If the templates directory does not exist, the “use template” action is unavailable
+- Templates without frontmatter form fields insert immediately — no dialog shown
+- The form dialog renders each field in its declared type: text (single-line), text (multiline), number, date, select (dropdown)
+- All `{{field_name}}` placeholders in the body are replaced; unmatched placeholders are left as-is (no silent data loss)
+- Inserting at cursor does not modify content outside the inserted region
+- Creating from template produces a new file containing only the rendered body (frontmatter form definition is stripped from the output)
 
 ## Functional Requirements
 
@@ -112,4 +124,4 @@ Single user; no auth; data lives on-device only. The app opens directly to the u
 1. **What rendering library to use for markdown preview?** — Owner: user. Note: complexity risk flagged in FR-004 Socratic round; resolution deferred to tech-stack selection.
 2. **What's the placeholder syntax for template form fields in the template body?** — Owner: user. By: before implementation planning. (e.g., `{{field_name}}` vs `<field_name>` vs custom syntax.)
 3. **What are the ballpark `qps` and `data_volume` for `target_scale`?** — Owner: user. Note: for a local desktop app these may be N/A; confirm or provide ballparks so the PRD frontmatter is complete.
-4. **Missing user story for the template insertion flow (US-02, covering FR-010 through FR-014)** — Owner: user. By: before implementation planning. The template workflow is the key differentiator of Outline; having a Given/When/Then story for it strengthens downstream planning. Block: no (FRs cover the scope), but recommended.
+4. ~~Missing user story for the template insertion flow~~ — **Resolved: US-02 added above.**
