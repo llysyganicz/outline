@@ -97,8 +97,8 @@ class EditorNotifier {
     if (path == null) return;
     try {
       File(path).writeAsStringSync(fileContent.value);
-    } catch (_) {
-      // Silently ignore — next auto-save or manual save retries.
+    } catch (e, st) {
+      debugPrint('EditorNotifier._flushSync failed for $path: $e\n$st');
     }
   }
 

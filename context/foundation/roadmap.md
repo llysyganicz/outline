@@ -33,6 +33,7 @@ Developers who write structured markdown notes daily lack a lightweight desktop 
 | S-02 | file-management | create new notes and directories, and delete them with a confirmation dialog | S-01 | FR-005, FR-006, FR-007, FR-008 | proposed |
 | S-03 | create-from-template | create a new note from a template file located in the templates directory; if the templates directory does not exist, no templates are available | S-01 | FR-011 | proposed |
 | S-04 | form-driven-template-insertion | insert a template at the cursor position by filling in a dynamic form dialog with typed fields (text, multiline, number, date, select) | S-01, S-03 | FR-012, FR-013, FR-014 | blocked |
+| S-05 | structured-logging | configure a file-based logging mechanism to replace debugPrint calls so errors and diagnostics are persisted to disk for post-mortem debugging | S-01 | (infra) | proposed |
 
 ## Baseline
 
@@ -108,6 +109,20 @@ None. The Flutter scaffold is already in place (partial — `lib/main.dart` shel
 - **Risk:** This is the product's key differentiator — the form dialog renders dynamically from the template's frontmatter. The riskiest assumption (the assumption whose failure would invalidate this slice) is that Flutter's widget system can render a fully dynamic form from a parsed frontmatter schema at runtime; a one-field proof-of-concept early in implementation de-risks the rest of the field types. Placeholder syntax settled: `{{field_name}}`.
 - **Status:** proposed
 
+### S-05: Structured logging to file
+
+- **Outcome:** all debugPrint/error catch blocks replaced with a logger that writes to a rotating log file on disk, so users and developers can diagnose issues post-mortem without a debug console
+- **Change ID:** structured-logging
+- **PRD refs:** (infra — not user-facing, but supports observability)
+- **Prerequisites:** S-01
+- **Parallel with:** S-02, S-03
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** Low — replacing debugPrint calls is mechanical; choosing a logging library and log directory convention are the only decisions.
+- **Status:** proposed
+
+---
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
@@ -116,6 +131,7 @@ None. The Flutter scaffold is already in place (partial — `lib/main.dart` shel
 | S-02 | file-management | Create and delete notes and directories with confirmation dialog | no | After S-01 lands; can run in parallel with S-03 |
 | S-03 | create-from-template | Create new note from a static template file in the templates directory | no | After S-01 lands; can run in parallel with S-02 |
 | S-04 | form-driven-template-insertion | Form-driven template insertion at cursor (dynamic dialog, typed fields, `{{field_name}}` substitution) | no | After S-01 + S-03 land |
+| S-05 | structured-logging | Add file-based logging to replace debugPrint calls; errors and diagnostics persisted to disk | no | After S-01 lands; cross-cutting concern |
 
 ## Open Roadmap Questions
 

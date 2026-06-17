@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:kiwi/kiwi.dart';
 
 import '../notifiers/editor_notifier.dart';
+import '../services/file_service.dart';
 import '../widgets/file_tree.dart';
 import '../widgets/note_editor.dart';
 import '../widgets/note_preview.dart';
@@ -10,9 +11,11 @@ import '../widgets/note_preview.dart';
 /// All state lives in [EditorNotifier]; this widget is stateless.
 class EditorScreen extends StatelessWidget {
   EditorScreen({super.key})
-      : _notifier = KiwiContainer().resolve<EditorNotifier>();
+      : _notifier = KiwiContainer().resolve<EditorNotifier>(),
+        _files = KiwiContainer().resolve<FileService>();
 
   final EditorNotifier _notifier;
+  final FileService _files;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +91,7 @@ class EditorScreen extends StatelessWidget {
             );
           }
           return FileTree(
+            fileService: _files,
             rootPath: root,
             selectedFilePath: _notifier.selectedFilePath,
             onFileTapped: _notifier.selectFile,

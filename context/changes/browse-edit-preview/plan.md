@@ -238,7 +238,7 @@ class FileSystemEntry {
 
 class FileService {
   List<FileSystemEntry> listDirectory(String dirPath);
-  Future<String> readFile(String filePath);
+  Future<String?> readFile(String filePath); // null signals read failure
   Future<void> writeFile(String filePath, String content);
 }
 ```
@@ -419,7 +419,7 @@ flush) is also wired here.
 final ValueNotifier<String> fileContent = ValueNotifier('');
 final CodeController codeController = CodeController(language: markdown);
 
-Future<void> selectFile(String path); // reads file, sets fileContent + codeController.text
+Future<void> selectFile(String path); // reads file, sets fileContent + codeController.text; also resets isPreviewMode to false
 void onEditorChanged(String content); // updates fileContent, resets debounce timer
 
 // lifecycle handled by AppLifecycleListener(onDetach: _flushSync) in constructor

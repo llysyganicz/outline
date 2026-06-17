@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+
 /// A single entry in a file-system tree listing.
 ///
 /// Directories carry a non-empty [children] list (recursively populated);
@@ -76,7 +78,8 @@ class FileService {
       }
 
       return entries;
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('FileService.listDirectory failed for $dirPath: $e\n$st');
       return [];
     }
   }
@@ -86,7 +89,8 @@ class FileService {
   Future<String?> readFile(String filePath) async {
     try {
       return await File(filePath).readAsString();
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('FileService.readFile failed for $filePath: $e\n$st');
       return null;
     }
   }
@@ -96,7 +100,8 @@ class FileService {
   Future<void> writeFile(String filePath, String content) async {
     try {
       await File(filePath).writeAsString(content);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('FileService.writeFile failed for $filePath: $e\n$st');
       // Silently ignore write failures — the next auto-save or manual
       // save will retry. A persistent error is a filesystem issue the
       // user needs to resolve outside Outline.

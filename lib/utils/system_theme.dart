@@ -53,7 +53,8 @@ Brightness? _tryGsettings() {
         }
       }
     }
-  } catch (_) {
+  } catch (e) {
+    debugPrint('system_theme: gsettings failed: $e');
     // gsettings not available
   }
   return null;
@@ -81,6 +82,8 @@ Brightness? _trySettingsIni() {
         return Brightness.dark;
       }
     }
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('system_theme: settings.ini parse failed: $e');
+  }
   return null;
 }

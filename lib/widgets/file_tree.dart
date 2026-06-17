@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:kiwi/kiwi.dart';
 
 import '../services/file_service.dart';
 
@@ -13,12 +12,16 @@ import '../services/file_service.dart';
 /// listings are fast on local filesystems and the tree is rebuilt only when
 /// the root path or selected file changes.
 class FileTree extends StatelessWidget {
-  const FileTree({
+    const FileTree({
     super.key,
+    required this.fileService,
     required this.rootPath,
     required this.selectedFilePath,
     required this.onFileTapped,
   });
+
+  /// The [FileService] used to scan the filesystem.
+  final FileService fileService;
 
   /// The absolute path of the notes root directory to display.
   final String rootPath;
@@ -34,7 +37,6 @@ class FileTree extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fileService = KiwiContainer().resolve<FileService>();
     final entries = fileService.listDirectory(rootPath);
 
     // Rebuild items whenever selectedFilePath changes so the TreeView
