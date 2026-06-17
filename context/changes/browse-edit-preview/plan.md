@@ -666,7 +666,7 @@ practice, move writes to a background isolate via `compute`.
 
 #### Automated
 
-- [ ] 3.1 `flutter analyze` passes
+- [x] 3.1 `flutter analyze` passes — 503739b13eb4
 
 #### Manual
 

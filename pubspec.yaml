@@ -12,7 +12,9 @@ dependencies:
   fluent_ui: ^4.15.1
   flutter:
     sdk: flutter
+  flutter_highlight: ^0.7.0
   flutter_markdown_plus: ^1.0.7
+  highlight: ^0.7.0
   kiwi: ^5.0.1
   shared_preferences: ^2.5.5
 

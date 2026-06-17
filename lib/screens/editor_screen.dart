@@ -3,20 +3,10 @@ import 'package:kiwi/kiwi.dart';
 
 import '../notifiers/editor_notifier.dart';
 import '../widgets/file_tree.dart';
+import '../widgets/note_editor.dart';
 
-/// Main editor screen with a two-panel layout.
-///
-/// Layout:
-/// ```
-/// ┌─ CommandBar (Change folder) ──────────────────────────────────┐
-/// ├──────────┬────────────────────────────────────────────────────┤
-/// │ FileTree │  Right panel: placeholder (Phase 3 → NoteEditor)  │
-/// │ (260px)  │  or "Select a note" when no file is active         │
-/// └──────────┴────────────────────────────────────────────────────┘
-/// ```
-///
-/// All state lives in [EditorNotifier]; this widget is a pure
-/// [StatelessWidget] with zero business logic.
+/// Two-panel layout: file tree (left) + editor or preview (right).
+/// All state lives in [EditorNotifier]; this widget is stateless.
 class EditorScreen extends StatelessWidget {
   EditorScreen({super.key})
       : _notifier = KiwiContainer().resolve<EditorNotifier>();
@@ -104,8 +94,10 @@ class EditorScreen extends StatelessWidget {
           if (path == null) {
             return const Center(child: Text('Select a note'));
           }
-          // Placeholder — replaced with NoteEditor in Phase 3.
-          return const Center(child: Text('Editor (Phase 3)'));
+          return NoteEditor(
+            controller: _notifier.codeController,
+            onChanged: _notifier.onEditorChanged,
+          );
         },
       ),
     );

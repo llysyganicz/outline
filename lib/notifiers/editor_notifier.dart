@@ -1,45 +1,35 @@
-import 'package:flutter/widgets.dart';
+import 'dart:async';
+
+import 'package:code_text_field/code_text_field.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/widgets.dart';
+import 'package:highlight/languages/markdown.dart' show markdown;
 
 import '../services/preferences_service.dart';
 import '../services/file_service.dart';
 
-/// Single owner of all app state and business logic.
-///
-/// Exposes state as [ValueNotifier] fields that widgets bind to via
-/// [ValueListenableBuilder]. The notifier also carries all mutation methods
-/// so widgets remain pure [StatelessWidget]s with zero logic.
-///
-/// ### Initialization
-///
-/// Call [initialize] once after the first frame (e.g. from a post-frame
-/// callback in `main`) to restore the persisted root directory or show the
-/// native folder picker on first launch.
 class EditorNotifier {
   EditorNotifier(this._prefs, this._files) {
-    _lifecycleListener = AppLifecycleListener(onDetach: _flushSync);
+    _lifecycleListener = AppLifecycleListener(onDetach: () => unawaited(_flush()));
   }
 
   final PreferencesService _prefs;
-  // ignore: unused_field — used in Phase 3 for auto-save.
   final FileService _files;
   late final AppLifecycleListener _lifecycleListener;
 
-  // -- State notifiers --------------------------------------------------
-
-  /// The currently-selected notes root directory, or `null` if none chosen.
   final ValueNotifier<String?> rootDirectory = ValueNotifier(null);
-
-  /// The full path of the file currently selected in the tree, or `null`.
   final ValueNotifier<String?> selectedFilePath = ValueNotifier(null);
+  final ValueNotifier<String> fileContent = ValueNotifier('');
 
-  // -- Public API -------------------------------------------------------
+  final CodeController codeController = CodeController(
+    language: markdown,
+  );
 
-  /// Loads the persisted root directory, or shows the native folder picker
-  /// on first launch.
-  ///
-  /// Should be called once after the first frame so that
-  /// [FilePicker.getDirectoryPath] has a valid window handle.
+  bool _isDirty = false;
+  Timer? _saveTimer;
+
+  /// Restores persisted root, or opens folder picker on first launch.
+  /// Call after first frame so [FilePicker.getDirectoryPath] has a window.
   Future<void> initialize() async {
     final stored = await _prefs.getRootDirectory();
     if (stored != null && stored.isNotEmpty) {
@@ -49,34 +39,52 @@ class EditorNotifier {
     }
   }
 
-  /// Opens the native folder picker and persists the chosen directory.
-  ///
-  /// If the user cancels the picker, the current root is unchanged.
+  /// Opens picker, persists choice, resets editor state.
   Future<void> changeRootDirectory() async {
     final path = await FilePicker.getDirectoryPath();
     if (path != null) {
       rootDirectory.value = path;
       selectedFilePath.value = null;
+      fileContent.value = '';
+      codeController.text = '';
       await _prefs.setRootDirectory(path);
     }
   }
 
-  /// Selects a file in the tree (called when user taps a `.md` leaf).
-  void selectFile(String path) {
+  /// Reads file and populates editor with syntax highlighting.
+  Future<void> selectFile(String path) async {
     selectedFilePath.value = path;
+    final content = await _files.readFile(path);
+    if (content != null) {
+      fileContent.value = content;
+      codeController.text = content;
+    }
+    _isDirty = false;
+    _saveTimer?.cancel();
   }
 
-  // -- Lifecycle --------------------------------------------------------
-
-  /// Flushes pending auto-save when the app is about to be detached.
-  ///
-  /// This is a no-op until Phase 3 wires the editor state.
-  void _flushSync() {
-    // Will be wired in Phase 3 to save pending edits on app detach.
+  /// Updates content, marks dirty, resets 500ms auto-save timer.
+  void onEditorChanged(String content) {
+    fileContent.value = content;
+    _isDirty = true;
+    _saveTimer?.cancel();
+    _saveTimer = Timer(const Duration(milliseconds: 500), _flush);
   }
 
-  /// Releases resources held by this notifier.
+  Future<void> _flush() async {
+    if (!_isDirty) return;
+    final path = selectedFilePath.value;
+    if (path == null) return;
+    _isDirty = false;
+    _saveTimer?.cancel();
+    await _files.writeFile(path, fileContent.value);
+  }
+
+
+
   void dispose() {
+    _saveTimer?.cancel();
+    codeController.dispose();
     _lifecycleListener.dispose();
   }
 }
