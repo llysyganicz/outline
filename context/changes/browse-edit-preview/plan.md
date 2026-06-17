@@ -359,6 +359,21 @@ imports.
 `import 'screens/editor_screen.dart';` and `import 'di/container.dart';`. Remove the old
 `EditorScreen` class body. `home:` becomes `const EditorScreen()`.
 
+#### 8. Gruvbox resource dictionary (addendum to Phase 1)
+
+**File**: `lib/theme/gruvbox_resources.dart` (new file)
+
+**Intent**: Provide a `ResourceDictionary` that maps Fluent Design System resource keys to
+Gruvbox-colour-equivalent values so every built-in Fluent widget (TreeView, CommandBar, etc.)
+picks up the correct colours without per-widget overrides.
+
+**Contract**: A `GruvboxResources` class with:
+- `static ResourceDictionary forBrightness(Brightness brightness)` — returns dark or light
+  resource dictionary
+
+Also modify `lib/theme/gruvbox_theme.dart` (Phase 1) to pass `resources:` to both
+`FluentThemeData` instances so the resource dictionary is applied globally.
+
 ### Success Criteria:
 
 #### Automated Verification:
