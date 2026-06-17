@@ -3,7 +3,7 @@ project: "Outline"
 version: 1
 status: draft
 created: 2026-06-16
-updated: 2026-06-16
+updated: 2026-06-17
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -29,7 +29,7 @@ Developers who write structured markdown notes daily lack a lightweight desktop 
 
 | ID | Change ID | Outcome (user can …) | Prerequisites | PRD refs | Status |
 |---|---|---|---|---|---|
-| S-01 | browse-edit-preview | browse a markdown directory tree, open and edit a note with syntax highlighting, and toggle to HTML preview | — | US-01, FR-001, FR-002, FR-003, FR-004, FR-009, FR-010 | ready |
+| S-01 | browse-edit-preview | browse a markdown directory tree, open and edit a note with syntax highlighting, and toggle to HTML preview | — | US-01, FR-001, FR-002, FR-003, FR-004, FR-009, FR-010 | done |
 | S-02 | file-management | create new notes and directories, and delete them with a confirmation dialog | S-01 | FR-005, FR-006, FR-007, FR-008 | proposed |
 | S-03 | create-from-template | create a new note from a template file located in the templates directory; if the templates directory does not exist, no templates are available | S-01 | FR-011 | proposed |
 | S-04 | form-driven-template-insertion | insert a template at the cursor position by filling in a dynamic form dialog with typed fields (text, multiline, number, date, select) | S-01, S-03 | FR-012, FR-013, FR-014 | blocked |
@@ -65,7 +65,7 @@ None. The Flutter scaffold is already in place (partial — `lib/main.dart` shel
   - ~~What markdown rendering library to use?~~ **Resolved: `flutter_markdown_plus`** (official successor to the discontinued `flutter_markdown`; v1.0.7, Flutter 3.44 compatible, 334k downloads/month, drop-in API).
   - FR-010 coverage note: the templates directory is visible in the regular file tree — no separate template browser UI is needed. Convention: if a templates directory exists under the root, its files are available as templates; if it doesn't exist, there are no templates. `/10x-plan` decides the directory name convention (e.g., `_templates/`).
 - **Risk:** This is the north star — nothing else is meaningful until this works. The main implementation risk is edit/preview latency: the NFR requires < 200ms mode switch; must be verified end-to-end before the slice is closed.
-- **Status:** ready
+- **Status:** done
 
 ---
 
@@ -153,4 +153,4 @@ None. The Flutter scaffold is already in place (partial — `lib/main.dart` shel
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends an entry here — and flips that item's `Status` to `done` — when a change whose `Change ID` matches the item is archived.)
+- **S-01: browse a markdown directory tree, open and edit a note with syntax highlighting, and toggle to HTML preview** — Archived 2026-06-17 → `context/archive/2026-06-16-browse-edit-preview/`. Lesson: —.
