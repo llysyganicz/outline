@@ -4,6 +4,7 @@ import 'package:kiwi/kiwi.dart';
 import '../notifiers/editor_notifier.dart';
 import '../widgets/file_tree.dart';
 import '../widgets/note_editor.dart';
+import '../widgets/note_preview.dart';
 
 /// Two-panel layout: file tree (left) + editor or preview (right).
 /// All state lives in [EditorNotifier]; this widget is stateless.
@@ -23,6 +24,7 @@ class EditorScreen extends StatelessWidget {
           _buildToolbar(),
           Expanded(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildFileTreePanel(),
                 _buildDivider(context),
@@ -38,14 +40,33 @@ class EditorScreen extends StatelessWidget {
   // -- Toolbar -----------------------------------------------------------
 
   Widget _buildToolbar() {
-    return CommandBar(
-      primaryItems: [
-        CommandBarButton(
-          icon: const Icon(FluentIcons.folder_open, size: 16),
-          label: const Text('Change folder'),
-          onPressed: () => _notifier.changeRootDirectory(),
-        ),
-      ],
+    return ValueListenableBuilder<String?>(
+      valueListenable: _notifier.selectedFilePath,
+      builder: (context, path, _) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: _notifier.isPreviewMode,
+          builder: (context, isPreview, _) {
+            return CommandBar(
+              primaryItems: [
+                CommandBarButton(
+                  icon: const Icon(FluentIcons.folder_open, size: 16),
+                  label: const Text('Change folder'),
+                  onPressed: () => _notifier.changeRootDirectory(),
+                ),
+                CommandBarButton(
+                  icon: Icon(
+                    isPreview ? FluentIcons.edit : FluentIcons.red_eye,
+                    size: 16,
+                  ),
+                  label: Text(isPreview ? 'Edit' : 'Preview'),
+                  onPressed:
+                      path == null ? null : () => _notifier.togglePreview(),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -94,9 +115,17 @@ class EditorScreen extends StatelessWidget {
           if (path == null) {
             return const Center(child: Text('Select a note'));
           }
-          return NoteEditor(
-            controller: _notifier.codeController,
-            onChanged: _notifier.onEditorChanged,
+          return ValueListenableBuilder<bool>(
+            valueListenable: _notifier.isPreviewMode,
+            builder: (context, isPreview, _) {
+              if (isPreview) {
+                return NotePreview(content: _notifier.fileContent.value);
+              }
+              return NoteEditor(
+                controller: _notifier.codeController,
+                onChanged: _notifier.onEditorChanged,
+              );
+            },
           );
         },
       ),

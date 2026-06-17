@@ -43,8 +43,9 @@ editor, auto-save edits after 0.5 seconds of inactivity, and toggle to rendered 
 - No automated or widget tests — manual verification only for this slice
 - No light/dark theme switcher UI — follows OS preference automatically
 - No resizable split panel — left panel is fixed width in v1
-- No syntax highlight color customization — `code_text_field` defaults used; Gruvbox token colors
-  can be wired in a follow-up
+- No syntax highlight color customization — `code_text_field` defaults used. *(Addendum: Gruvbox
+  syntax themes were wired in Phase 3 via `flutter_highlight` to match the app-wide Gruvbox palette
+  — see Phase 3 addendum below.)*
 
 ## Implementation Approach
 
@@ -451,6 +452,12 @@ class NoteEditor extends StatelessWidget {
 `CodeField(controller: controller, onChanged: onChanged)` fills the available space.
 No `inputFormatters`, no `textCapitalization` — the editor does not modify the user's text.
 
+> **Addendum (impl-review):** The widget also wraps `CodeField` in `CodeTheme` with
+> `gruvboxDarkTheme` / `gruvboxLightTheme` from `flutter_highlight`. This was not in the original
+> plan (which deferred syntax-highlight colour theming to a follow-up) but was deemed a natural
+> extension of the app-wide Gruvbox palette while the editor was being built, avoiding a default
+> theme mismatch. The `flutter_highlight` package (`^0.7.0`) was added to `pubspec.yaml` for this.
+
 #### 3. EditorScreen — wire editor into right panel
 
 **File**: `lib/screens/editor_screen.dart`
@@ -670,16 +677,16 @@ practice, move writes to a background isolate via `compute`.
 
 #### Manual
 
-- [ ] 3.2 Selecting a file loads content with markdown syntax highlighting
-- [ ] 3.3 Editing content saves to disk after ~0.5 seconds inactivity
-- [ ] 3.4 Closing app immediately after edit still saves content to disk
-- [ ] 3.5 Frontmatter visible as plain text in edit mode
+- [x] 3.2 Selecting a file loads content with markdown syntax highlighting
+- [x] 3.3 Editing content saves to disk after ~0.5 seconds inactivity
+- [x] 3.4 Closing app immediately after edit still saves content to disk
+- [x] 3.5 Frontmatter visible as plain text in edit mode
 
 ### Phase 4: Preview & Toggle
 
 #### Automated
 
-- [ ] 4.1 `flutter analyze` passes
+- [x] 4.1 `flutter analyze` passes
 
 #### Manual
 
