@@ -1,13 +1,22 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:kiwi/kiwi.dart';
 
 import 'di/container.dart';
+import 'notifiers/editor_notifier.dart';
 import 'theme/gruvbox_theme.dart';
 import 'screens/editor_screen.dart';
 import 'utils/system_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   setupDependencies();
   runApp(const OutlineApp());
+
+  // Initialise the notifier after the first frame so that the native file
+  // picker (opened on first launch) has a valid window handle.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    KiwiContainer().resolve<EditorNotifier>().initialize();
+  });
 }
 
 /// Determines the initial [ThemeMode] based on the platform.
@@ -34,7 +43,7 @@ class OutlineApp extends StatelessWidget {
       theme: GruvboxTheme.light,
       darkTheme: GruvboxTheme.dark,
       themeMode: _initialThemeMode(),
-      home: const EditorScreen(),
+      home: EditorScreen(),
     );
   }
 }

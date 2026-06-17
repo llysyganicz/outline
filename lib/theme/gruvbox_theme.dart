@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
+import 'gruvbox_resources.dart';
+
 /// Canonical Gruvbox color palette and theme data for Fluent UI.
 ///
 /// Both variants use the published Gruvbox hex values without modification.
@@ -54,6 +56,7 @@ class GruvboxTheme {
       cardColor: const Color(0xFF3c3836),
       menuColor: const Color(0xFF3c3836),
       selectionColor: aqua,
+      resources: GruvboxResources.forBrightness(Brightness.dark),
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }
@@ -71,6 +74,7 @@ class GruvboxTheme {
       cardColor: const Color(0xFFebdbb2),
       menuColor: const Color(0xFFebdbb2),
       selectionColor: aqua,
+      resources: GruvboxResources.forBrightness(Brightness.light),
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
   }

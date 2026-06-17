@@ -635,17 +635,17 @@ practice, move writes to a background isolate via `compute`.
 
 #### Automated
 
-- [ ] 2.1 `flutter analyze` passes with no issues
-- [ ] 2.2 `flutter build linux` compiles cleanly
+- [x] 2.1 `flutter analyze` passes with no issues — 80ca0942
+- [x] 2.2 `flutter build linux` compiles cleanly — 80ca0942
 
 #### Manual
 
-- [ ] 2.3 First launch opens native folder picker
-- [ ] 2.4 File tree shows `.md` files and subdirectories with Gruvbox styling
-- [ ] 2.5 Directories expand and collapse on click
-- [ ] 2.6 Non-`.md` files are not shown in the tree
-- [ ] 2.7 "Change folder" button re-opens picker and refreshes tree
-- [ ] 2.8 App restart restores previously chosen directory without picker
+- [x] 2.3 First launch opens native folder picker — 80ca0942
+- [x] 2.4 File tree shows `.md` files and subdirectories with Gruvbox styling — 80ca0942
+- [x] 2.5 Directories expand and collapse on click — 80ca0942
+- [x] 2.6 Non-`.md` files are not shown in the tree — 80ca0942
+- [x] 2.7 "Change folder" button re-opens picker and refreshes tree — 80ca0942
+- [x] 2.8 App restart restores previously chosen directory without picker — 80ca0942
 
 ### Phase 3: Note Editor
 
