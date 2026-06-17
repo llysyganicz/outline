@@ -91,8 +91,10 @@ also lives for the full process lifetime; explicit disposal is not required.
 
 Add all feature dependencies to `pubspec.yaml`, run `flutter pub get`, scaffold the `lib/`
 directory structure, and replace `MaterialApp` with `FluentApp` using Gruvbox light and dark
-`FluentThemeData`. After this phase the app shell runs with Gruvbox colors and the placeholder
-text is still visible.
+`FluentThemeData`. On Linux, brightness detection uses GTK settings directly (via
+`system_theme.dart`) because Flutter's `ThemeMode.system` may report light mode
+unreliably on that platform. After this phase the app shell runs with Gruvbox colors and the
+placeholder text is still visible.
 
 ### Changes Required:
 
@@ -100,7 +102,7 @@ text is still visible.
 
 **File**: `pubspec.yaml`
 
-**Intent**: Add the five feature packages required by this slice so all subsequent phases can
+**Intent**: Add the six feature packages required by this slice so all subsequent phases can
 import them without further manifest changes.
 
 **Contract**: Add under `dependencies:`:
@@ -130,16 +132,47 @@ the published Gruvbox hex values without modification.
 `fluent_ui` uses `AccentColor` (a `Color` subclass with a swatch) for `FluentThemeData.accentColor`.
 Construct it with the Gruvbox blue/aqua variants as swatch entries.
 
-#### 3. App root
+#### 3. System theme detection
+
+**File**: `lib/utils/system_theme.dart` (new file)
+
+**Intent**: Provide a platform-aware brightness detection function for Linux.
+Flutter's built-in `ThemeMode.system` is unreliable on Linux (it may always
+report light mode depending on the compositor/DE). This module queries GTK
+settings as the canonical source of truth, with a fallback chain:
+`gsettings` → `GTK_THEME` env var → `settings.ini` → light default.
+
+**Contract**:
+```dart
+Brightness? detectPlatformBrightness()
+```
+Returns `Brightness.dark` or `Brightness.light` on Linux by querying GTK
+settings; returns `null` on non-Linux platforms (Windows, macOS) so the
+caller falls back to `ThemeMode.system`.
+
+Resolution order:
+1. `gsettings get org.gnome.desktop.interface color-scheme` (GNOME/KDE/GTK)
+2. `GTK_THEME` environment variable
+3. `~/.config/gtk-3.0/settings.ini` and `~/.config/gtk-4.0/settings.ini`
+4. Fallback to `Brightness.light`
+
+#### 4. App root
 
 **File**: `lib/main.dart`
 
-**Intent**: Replace `MaterialApp` with `FluentApp` and wire the Gruvbox themes. The app follows
-OS dark/light preference automatically.
+**Intent**: Replace `MaterialApp` with `FluentApp`, wire the Gruvbox themes,
+and apply platform-aware dark-mode detection through `system_theme.dart`.
+The app follows OS dark/light preference automatically, using GTK settings
+on Linux and the Flutter engine's native detection on other platforms.
 
 **Contract**: Call `setupDependencies()` (defined in `lib/di/container.dart`, see Phase 2)
 at the top of `main()` before `runApp`. Then:
-`FluentApp(theme: GruvboxTheme.light, darkTheme: GruvboxTheme.dark, themeMode: ThemeMode.system, home: const EditorScreen())`. Remove `MaterialApp` and its import; add `fluent_ui` import.
+- Use `_initialThemeMode()` (backed by `detectPlatformBrightness()`) instead of
+  bare `ThemeMode.system` — this ensures reliable dark-mode detection on Linux
+  while delegating to the engine on other platforms
+- `FluentApp(theme: GruvboxTheme.light, darkTheme: GruvboxTheme.dark, themeMode: _initialThemeMode(), home: const EditorScreen())`
+- Remove `MaterialApp` and its import; add `fluent_ui` import
+- Add imports for `system_theme.dart` and `editor_screen.dart`
 
 ### Success Criteria:
 
@@ -588,15 +621,15 @@ practice, move writes to a background isolate via `compute`.
 
 #### Automated
 
-- [x] 1.1 `flutter pub get` completes with no errors — b492549
-- [x] 1.2 `flutter analyze` reports no issues — b492549
-- [x] 1.3 `flutter build linux` completes without compile errors — b492549
+- [x] 1.1 `flutter pub get` completes with no errors — bdab30d
+- [x] 1.2 `flutter analyze` reports no issues — bdab30d
+- [x] 1.3 `flutter build linux` completes without compile errors — bdab30d
 
 #### Manual
 
-- [x] 1.4 App launches with Gruvbox Dark background in OS dark mode — b492549
-- [x] 1.5 App shows Gruvbox Light background in OS light mode — b492549
-- [x] 1.6 `Text('Outline')` placeholder visible — b492549
+- [x] 1.4 App launches with Gruvbox Dark background in OS dark mode — bdab30d
+- [x] 1.5 App shows Gruvbox Light background in OS light mode — bdab30d
+- [x] 1.6 `Text('Outline')` placeholder visible — bdab30d
 
 ### Phase 2: Root Directory & File Tree
 

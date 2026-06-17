@@ -45,7 +45,7 @@ desktop UI that follows the OS dark/light preference.
 - File tree showing `.md` files and subdirectories (`fluent_ui` `TreeView`)
 - Note loading on tree selection
 - Syntax-highlighted plain-text editor (`code_text_field` + markdown language mode)
-- Auto-save on inactivity (1 s debounce) + flush on app close
+- Auto-save on inactivity (0.5 s debounce) + flush on app close
 - HTML preview with frontmatter stripped (`flutter_markdown_plus`)
 - Edit/preview toggle button in `CommandBar`
 
@@ -64,7 +64,7 @@ All state and logic live in `EditorNotifier`, which exposes each piece of state 
 services are wired in a `kiwi` DI container (`setupDependencies()` in `lib/di/container.dart`),
 called once in `main` before `runApp` — similar to .NET's `IServiceCollection`. `EditorScreen`
 resolves `EditorNotifier` directly from the container; no `StatefulWidget` host is needed.
-`EditorNotifier` also holds the `CodeController` and implements `WidgetsBindingObserver` for
+`EditorNotifier` also holds the `CodeController` and implements `AppLifecycleListener` for
 the app-close flush.
 
 ## Phases at a Glance
