@@ -686,13 +686,13 @@ practice, move writes to a background isolate via `compute`.
 
 #### Automated
 
-- [x] 4.1 `flutter analyze` passes
+- [x] 4.1 `flutter analyze` passes — 6d5ed172
 
 #### Manual
 
-- [ ] 4.2 Toggle switches edit/preview without modifying file content
-- [ ] 4.3 Preview renders markdown correctly (headers, bold, italic, code, lists, links)
-- [ ] 4.4 Frontmatter absent from preview, only body rendered
-- [ ] 4.5 Mode switch feels instant (< 200 ms subjectively)
-- [ ] 4.6 Notes without frontmatter render full content correctly
-- [ ] 4.7 Gruvbox colors consistent across edit and preview modes
+- [x] 4.2 Toggle switches edit/preview without modifying file content
+- [x] 4.3 Preview renders markdown correctly (headers, bold, italic, code, lists, links)
+- [x] 4.4 Frontmatter absent from preview, only body rendered
+- [x] 4.5 Mode switch feels instant (< 200 ms subjectively)
+- [x] 4.6 Notes without frontmatter render full content correctly
+- [x] 4.7 Gruvbox colors consistent across edit and preview modes
